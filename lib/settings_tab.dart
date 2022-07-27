@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:sid_workout/exercises_page.dart';
 import 'package:sid_workout/utils.dart';
+import 'package:sid_workout/workouts_page.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -75,7 +76,12 @@ class _SettingsState extends State<Settings> {
                     SettingsTile.navigation(
                       title: Text("Workout Plans"),
                       onPressed: (context) {
-                        print("Clicked Workout Plans");
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (context) => const WorkoutPlans(),
+                          ),
+                        );
                       },
                     ),
                     SettingsTile.navigation(

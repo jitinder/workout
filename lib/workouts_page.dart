@@ -1,18 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sid_workout/data_storage.dart';
-import 'package:sid_workout/utils.dart';
 import 'package:swipeable_tile/swipeable_tile.dart';
 
-class Exercises extends StatefulWidget {
-  const Exercises({Key? key}) : super(key: key);
+import 'objects/workout_plan.dart';
+
+class WorkoutPlans extends StatefulWidget {
+  const WorkoutPlans({Key? key}) : super(key: key);
 
   @override
-  State<Exercises> createState() => _ExercisesState();
+  State<WorkoutPlans> createState() => _WorkoutPlansState();
 }
 
-class _ExercisesState extends State<Exercises> {
-  List<String> exercises = <String>[];
+class _WorkoutPlansState extends State<WorkoutPlans> {
+  List<WorkoutPlan> workoutPlans = <WorkoutPlan>[];
 
   @override
   void initState() {
@@ -21,24 +22,24 @@ class _ExercisesState extends State<Exercises> {
   }
 
   _readFromFile() async {
-    List<String> rExercises = await DataStorage().readExercises();
+    List<WorkoutPlan> rWorkoutPlans = await DataStorage().readWorkoutPlans();
     setState(() {
-      exercises = rExercises;
+      workoutPlans = rWorkoutPlans;
     });
   }
 
   _writeToFile() async {
-    await DataStorage().writeExercises(exercises);
+    await DataStorage().writeWorkoutPlans(workoutPlans);
   }
 
-  Widget _exerciseTile(String title, int index) {
+  Widget _workoutPlanTile(WorkoutPlan workoutPlan, int index) {
     return SwipeableTile(
       color: CupertinoColors.white,
       swipeThreshold: 0.4,
       direction: SwipeDirection.horizontal,
       onSwiped: (direction) {
         setState(() {
-          exercises.removeAt(index);
+          workoutPlans.removeAt(index);
         });
         _writeToFile();
       },
@@ -55,7 +56,7 @@ class _ExercisesState extends State<Exercises> {
       },
       key: UniqueKey(),
       child: ListTile(
-        title: Text(title),
+        title: Text(workoutPlan.name),
       ),
     );
   }
@@ -64,25 +65,20 @@ class _ExercisesState extends State<Exercises> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Exercises"),
+        title: const Text("Workout Plans"),
         backgroundColor: Colors.deepOrange,
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         backgroundColor: Colors.deepOrange,
         onPressed: () {
-          showTextDialog(context, "Enter Exercise Name", (text) {
-            setState(() {
-              exercises.add((text).toString());
-            });
-            _writeToFile();
-          });
+          // Add logic here
         },
       ),
       body: ListView.builder(
-        itemCount: exercises.length,
+        itemCount: workoutPlans.length,
         itemBuilder: (BuildContext context, int index) {
-          return _exerciseTile(exercises[index], index);
+          return _workoutPlanTile(workoutPlans[index], index);
         },
       ),
     );
