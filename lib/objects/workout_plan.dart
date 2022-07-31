@@ -2,27 +2,49 @@ class WorkoutExercise {
   String name;
   String description;
   int sets;
+  int restTime;
 
-  WorkoutExercise(this.name, this.description, this.sets);
+  WorkoutExercise(this.name, this.description, this.sets, this.restTime);
 
   WorkoutExercise.fromJson(Map<String, dynamic> json)
       : name = json['name'],
         description = json['description'],
-        sets = json['sets'];
+        sets = json['sets'],
+        restTime = json['restTime'];
 
-  Map<String, dynamic> toJson() =>
-      {'name': name, 'description': description, 'sets': sets};
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'description': description,
+        'sets': sets,
+        'restTime': restTime
+      };
+}
+
+class WorkoutDay {
+  String name;
+  List<WorkoutExercise> exercises;
+
+  WorkoutDay(this.name, this.exercises);
+
+  WorkoutDay.fromJson(Map<String, dynamic> json)
+      : name = json["name"],
+        exercises = json["exercises"];
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        "exercises": exercises,
+      };
 }
 
 class WorkoutPlan {
   String name;
-  List<WorkoutExercise> monday;
-  List<WorkoutExercise> tuesday;
-  List<WorkoutExercise> wednesday;
-  List<WorkoutExercise> thursday;
-  List<WorkoutExercise> friday;
-  List<WorkoutExercise> saturday;
-  List<WorkoutExercise> sunday;
+  WorkoutDay monday;
+  WorkoutDay tuesday;
+  WorkoutDay wednesday;
+  WorkoutDay thursday;
+  WorkoutDay friday;
+  WorkoutDay saturday;
+  WorkoutDay sunday;
 
   WorkoutPlan(this.name, this.monday, this.tuesday, this.wednesday,
       this.thursday, this.friday, this.saturday, this.sunday);

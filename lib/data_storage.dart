@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:path_provider/path_provider.dart';
 
 import 'objects/workout_plan.dart';
@@ -8,6 +9,34 @@ class DataStorage {
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
     return directory.path;
+  }
+
+  Future<File> get _workoutDaysFile async {
+    final path = await _localPath;
+    return File('$path/workoutDays.json');
+  }
+
+  Future<List<WorkoutDay>> readWorkoutDays() async {
+    try {
+      final file = await _workoutDaysFile;
+      final contents = await file.readAsString();
+      Iterable l = json.decode(contents);
+      List<WorkoutDay> workoutDays = List<WorkoutDay>.from(
+        l.map(
+          (model) => WorkoutDay.fromJson(model),
+        ),
+      );
+      return workoutDays;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<File> writeWorkoutDays(List<WorkoutDay> workoutDays) async {
+    final file = await _workoutDaysFile;
+    return file.writeAsString(
+      json.encode(workoutDays),
+    );
   }
 
   Future<File> get _workoutPlansFile async {

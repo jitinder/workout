@@ -5,7 +5,8 @@ import 'package:sid_workout/utils.dart';
 import 'package:swipeable_tile/swipeable_tile.dart';
 
 class Exercises extends StatefulWidget {
-  const Exercises({Key? key}) : super(key: key);
+  final bool? selecting;
+  const Exercises({Key? key, this.selecting}) : super(key: key);
 
   @override
   State<Exercises> createState() => _ExercisesState();
@@ -13,6 +14,7 @@ class Exercises extends StatefulWidget {
 
 class _ExercisesState extends State<Exercises> {
   List<String> exercises = <String>[];
+  List<String> selectedExercises = [];
 
   @override
   void initState() {
@@ -33,7 +35,9 @@ class _ExercisesState extends State<Exercises> {
 
   Widget _exerciseTile(String title, int index) {
     return SwipeableTile(
-      color: CupertinoColors.white,
+      color: selectedExercises.contains(title)
+          ? CupertinoColors.lightBackgroundGray
+          : CupertinoColors.white,
       swipeThreshold: 0.4,
       direction: SwipeDirection.horizontal,
       onSwiped: (direction) {
@@ -56,8 +60,32 @@ class _ExercisesState extends State<Exercises> {
       key: UniqueKey(),
       child: ListTile(
         title: Text(title),
+        onTap: () {
+          setState(() {
+            if (selectedExercises.contains(title)) {
+              selectedExercises.remove(title);
+            } else {
+              selectedExercises.add(title);
+            }
+          });
+        },
       ),
     );
+  }
+
+  Widget _getTrailingWidget() {
+    final selecting = widget.selecting;
+    if (selecting != null) {
+      if (selecting) {
+        return IconButton(
+          icon: Icon(Icons.check),
+          onPressed: () {
+            Navigator.pop(context, [...selectedExercises]);
+          },
+        );
+      }
+    }
+    return Container();
   }
 
   @override
@@ -66,6 +94,9 @@ class _ExercisesState extends State<Exercises> {
       appBar: AppBar(
         title: const Text("Exercises"),
         backgroundColor: Colors.deepOrange,
+        actions: [
+          _getTrailingWidget(),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),

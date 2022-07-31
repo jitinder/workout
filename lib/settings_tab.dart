@@ -5,6 +5,8 @@ import 'package:sid_workout/exercises_page.dart';
 import 'package:sid_workout/utils.dart';
 import 'package:sid_workout/workouts_page.dart';
 
+import 'workout_days_page.dart';
+
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
 
@@ -69,6 +71,17 @@ class _SettingsState extends State<Settings> {
                           context,
                           CupertinoPageRoute(
                             builder: (context) => const Exercises(),
+                          ),
+                        );
+                      },
+                    ),
+                    SettingsTile.navigation(
+                      title: Text("Workout Days"),
+                      onPressed: (context) {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (context) => const WorkoutDays(),
                           ),
                         );
                       },

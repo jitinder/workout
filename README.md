@@ -1,6 +1,6 @@
 # sid_workout
 
-Sidak's private workout app
+Sidak's personal workout app
 
 ## Getting Started
 
