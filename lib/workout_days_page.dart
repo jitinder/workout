@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:sid_workout/objects/workout_plan.dart';
+import 'package:sid_workout/view_workout_day.dart';
 import 'package:swipeable_tile/swipeable_tile.dart';
 
 import 'data_storage.dart';
@@ -60,6 +61,14 @@ class _WorkoutDaysState extends State<WorkoutDays> {
       key: UniqueKey(),
       child: ListTile(
         title: Text(workoutDay.name),
+        onTap: () {
+          showCupertinoModalBottomSheet(
+            context: context,
+            builder: (context) => ViewWorkoutDay(
+              workoutDay: workoutDay,
+            ),
+          );
+        },
       ),
     );
   }
