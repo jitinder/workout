@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sid_workout/data_storage.dart';
 import 'package:sid_workout/exercises_page.dart';
 import 'package:sid_workout/utils.dart';
-import 'package:sid_workout/workouts_page.dart';
+import 'package:sid_workout/workout_plans_page.dart';
 
+import 'objects/workout_plan.dart';
 import 'workout_days_page.dart';
 
 class Settings extends StatefulWidget {
@@ -15,6 +18,35 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  String? _workoutPlanName;
+  List<WorkoutPlan> _workoutPlans = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _getWorkoutPlanName();
+    _getWorkoutPlans();
+  }
+
+  void _getWorkoutPlans() async {
+    List<WorkoutPlan> plans = await DataStorage().readWorkoutPlans();
+    setState(() {
+      _workoutPlans = plans;
+    });
+  }
+
+  void _getWorkoutPlanName() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _workoutPlanName = prefs.getString("workout_plan_name");
+    });
+  }
+
+  void _setWorkoutPlanName() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString("workout_plan_name", _workoutPlanName ?? "");
+  }
+
   _showCupertinoPicker(BuildContext context, Widget picker) {
     showCupertinoModalPopup(
       context: context,
@@ -28,9 +60,25 @@ class _SettingsState extends State<Settings> {
         // Provide a background color for the popup.
         color: CupertinoColors.systemBackground.resolveFrom(context),
         // Use a SafeArea widget to avoid system overlaps.
-        child: SafeArea(
-          top: false,
-          child: picker,
+        child: Column(
+          children: [
+            CupertinoButton(
+              child: Text("Save"),
+              onPressed: () {
+                Navigator.pop(context);
+                if (_workoutPlanName == null) {
+                  setState(() {
+                    _workoutPlanName = _workoutPlans[0].name;
+                  });
+                }
+                _setWorkoutPlanName();
+              },
+            ),
+            SafeArea(
+              top: false,
+              child: picker,
+            ),
+          ],
         ),
       ),
     );
@@ -99,21 +147,30 @@ class _SettingsState extends State<Settings> {
                     ),
                     SettingsTile.navigation(
                       title: Text("Current Plan"),
-                      value: Text("Bulking"),
-                      onPressed: (context) {
-                        _showCupertinoPicker(
-                          context,
-                          CupertinoPicker(
-                            itemExtent: 32.0,
-                            onSelectedItemChanged: (item) {},
-                            children: [
-                              Text("Test1"),
-                              Text("Test2"),
-                              Text("Test3"),
-                              Text("Test4"),
-                            ],
-                          ),
-                        );
+                      value: Text(_workoutPlanName ?? "None"),
+                      onPressed: (context) async {
+                        if (_workoutPlans.isNotEmpty) {
+                          _showCupertinoPicker(
+                            context,
+                            CupertinoPicker(
+                              itemExtent: 32.0,
+                              onSelectedItemChanged: (index) {
+                                setState(() {
+                                  _workoutPlanName = _workoutPlans[index].name;
+                                });
+                              },
+                              children: [
+                                ..._workoutPlans
+                                    .map((wPlan) => Text(wPlan.name)),
+                              ],
+                            ),
+                          );
+                        } else {
+                          setState(() {
+                            _workoutPlanName = null;
+                          });
+                          _setWorkoutPlanName();
+                        }
                       },
                     ),
                   ],

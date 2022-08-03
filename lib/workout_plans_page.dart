@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:sid_workout/data_storage.dart';
 import 'package:sid_workout/new_workout_plan.dart';
+import 'package:sid_workout/view_workout_plan.dart';
 import 'package:swipeable_tile/swipeable_tile.dart';
 
 import 'objects/workout_plan.dart';
@@ -59,6 +60,13 @@ class _WorkoutPlansState extends State<WorkoutPlans> {
       key: UniqueKey(),
       child: ListTile(
         title: Text(workoutPlan.name),
+        onTap: () {
+          showCupertinoModalBottomSheet(
+              context: context,
+              builder: (context) => ViewWorkoutPlan(
+                    workoutPlan: workoutPlan,
+                  ));
+        },
       ),
     );
   }
@@ -73,12 +81,18 @@ class _WorkoutPlansState extends State<WorkoutPlans> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         backgroundColor: Colors.deepOrange,
-        onPressed: () {
-          showCupertinoModalBottomSheet(
+        onPressed: () async {
+          dynamic rValue = await showCupertinoModalBottomSheet(
             enableDrag: false,
             context: context,
             builder: (BuildContext buildContext) => NewWorkoutPlan(),
           );
+          if (rValue != null) {
+            setState(() {
+              workoutPlans.add(rValue[0]);
+            });
+            _writeToFile();
+          }
         },
       ),
       body: ListView.builder(

@@ -28,7 +28,8 @@ class WorkoutDay {
 
   WorkoutDay.fromJson(Map<String, dynamic> json)
       : name = json["name"],
-        exercises = json["exercises"];
+        exercises = List<WorkoutExercise>.from((json['exercises'] as List)
+            .map((element) => WorkoutExercise.fromJson(element)));
 
   Map<String, dynamic> toJson() => {
         'name': name,
@@ -51,13 +52,13 @@ class WorkoutPlan {
 
   WorkoutPlan.fromJson(Map<String, dynamic> json)
       : name = json["name"],
-        monday = json["monday"],
-        tuesday = json["tuesday"],
-        wednesday = json["wednesday"],
-        thursday = json["thursday"],
-        friday = json["friday"],
-        saturday = json["saturday"],
-        sunday = json["sunday"];
+        monday = WorkoutDay.fromJson(json["monday"]),
+        tuesday = WorkoutDay.fromJson(json["tuesday"]),
+        wednesday = WorkoutDay.fromJson(json["wednesday"]),
+        thursday = WorkoutDay.fromJson(json["thursday"]),
+        friday = WorkoutDay.fromJson(json["friday"]),
+        saturday = WorkoutDay.fromJson(json["saturday"]),
+        sunday = WorkoutDay.fromJson(json["sunday"]);
 
   Map<String, dynamic> toJson() => {
         'name': name,

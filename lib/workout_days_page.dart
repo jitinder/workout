@@ -10,7 +10,8 @@ import 'exercises_page.dart';
 import 'new_workout_day.dart';
 
 class WorkoutDays extends StatefulWidget {
-  const WorkoutDays({Key? key}) : super(key: key);
+  final bool? picking;
+  const WorkoutDays({Key? key, this.picking}) : super(key: key);
 
   @override
   State<WorkoutDays> createState() => _WorkoutDaysState();
@@ -62,12 +63,17 @@ class _WorkoutDaysState extends State<WorkoutDays> {
       child: ListTile(
         title: Text(workoutDay.name),
         onTap: () {
-          showCupertinoModalBottomSheet(
-            context: context,
-            builder: (context) => ViewWorkoutDay(
-              workoutDay: workoutDay,
-            ),
-          );
+          bool picking = widget.picking ?? false;
+          if (picking) {
+            Navigator.pop(context, [workoutDay]);
+          } else {
+            showCupertinoModalBottomSheet(
+              context: context,
+              builder: (context) => ViewWorkoutDay(
+                workoutDay: workoutDay,
+              ),
+            );
+          }
         },
       ),
     );
